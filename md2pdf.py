@@ -781,7 +781,15 @@ def convert(
     page_css = f"""
     @page {{
         size: {page_size} {orientation};
-        margin: {margin};
+        margin: 0;
+    }}
+    html {{
+        margin: 0;
+        padding: 0;
+    }}
+    body {{
+        margin: 0;
+        padding: {margin};
     }}
     """
 
