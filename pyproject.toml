@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "md2pdf-cli"
-version = "1.0.1"
+version = "1.0.2"
 description = "Zero-dependency Markdown to PDF converter powered by headless Chromium/Edge"
 readme = "README.md"
 authors = [{ name = "Adil Arbaz Khan", email = "adilarbazkhan199@gmail.com" }]

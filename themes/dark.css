@@ -2,14 +2,25 @@
 
 * { box-sizing: border-box; }
 
+html {
+  background-color: #0f172a !important;
+  color: #e2e8f0;
+  margin: 0;
+  padding: 0;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
 body {
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   color: #e2e8f0;
-  background-color: #0f172a;
+  background-color: #0f172a !important;
   line-height: 1.65;
   font-size: 13px;
   margin: 0;
   padding: 0;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
 }
 
 h1 { font-size: 22px; color: #f8fafc; border-bottom: 2px solid #334155; padding-bottom: 8px; margin: 0 0 14px 0; }
@@ -24,11 +35,13 @@ li { margin-bottom: 4px; }
 code {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11.5px;
-  background-color: #1e293b;
+  background-color: #1e293b !important;
   color: #38bdf8;
   padding: 2px 5px;
   border-radius: 4px;
   border: 1px solid #334155;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
 }
 
 kbd {
@@ -39,12 +52,14 @@ kbd {
   font-weight: 600;
   line-height: 1.2;
   color: #f1f5f9;
-  background-color: #1e293b;
+  background-color: #1e293b !important;
   border: 1px solid #475569;
   border-bottom: 2px solid #64748b;
   border-radius: 4px;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
   vertical-align: middle;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
 }
 
 .math-inline {
@@ -55,17 +70,19 @@ kbd {
 }
 
 pre.code-block {
-  background-color: #020617;
+  background-color: #020617 !important;
   border-radius: 6px;
   padding: 12px 14px;
   overflow-x: auto;
   margin: 8px 0 14px 0;
   border: 1px solid #1e293b;
   page-break-inside: avoid;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
 }
 
 pre.code-block code {
-  background-color: transparent;
+  background-color: transparent !important;
   color: #e2e8f0;
   border: none;
   padding: 0;
@@ -78,6 +95,48 @@ pre.code-block code {
 
 .table-container { margin: 12px 0 16px 0; page-break-inside: avoid; overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 12px; }
-th { background-color: #1e293b; color: #f8fafc; font-weight: 600; border: 1px solid #334155; padding: 7px 10px; }
+th {
+  background-color: #1e293b !important;
+  color: #f8fafc;
+  font-weight: 600;
+  border: 1px solid #334155;
+  padding: 7px 10px;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
 td { border: 1px solid #334155; padding: 6px 10px; color: #cbd5e1; }
-tr:nth-child(even) td { background-color: #1e293b; }
+tr:nth-child(even) td {
+  background-color: #1e293b !important;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
+blockquote {
+  margin: 10px 0;
+  padding: 8px 14px;
+  border-left: 4px solid #38bdf8;
+  background-color: #1e293b !important;
+  color: #94a3b8;
+  border-radius: 0 4px 4px 0;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
+.callout {
+  margin: 12px 0;
+  padding: 10px 14px;
+  border-left: 4px solid #38bdf8;
+  border-radius: 4px;
+  background-color: #1e293b !important;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+.callout-note { border-color: #38bdf8; background-color: #0c4a6e !important; }
+.callout-tip { border-color: #34d399; background-color: #064e3b !important; }
+.callout-important { border-color: #a78bfa; background-color: #4c1d95 !important; }
+.callout-warning { border-color: #fbbf24; background-color: #78350f !important; }
+.callout-caution { border-color: #f87171; background-color: #7f1d1d !important; }
+.callout-title { font-weight: 700; font-size: 12px; margin-bottom: 4px; text-transform: uppercase; color: #f8fafc; }
+
+a { color: #38bdf8; }
+.page-break { page-break-before: always; }

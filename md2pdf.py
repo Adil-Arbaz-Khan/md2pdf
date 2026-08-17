@@ -18,7 +18,7 @@ import tempfile
 import shutil
 from pathlib import Path
 
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 
 # ----------------------------------------------------------------------
 # CSS Design Themes
@@ -31,14 +31,25 @@ DEFAULT_THEME = """
   box-sizing: border-box;
 }
 
+html {
+  background-color: #ffffff !important;
+  color: #1e293b;
+  margin: 0;
+  padding: 0;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
 body {
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   color: #1e293b;
-  background-color: #ffffff;
+  background-color: #ffffff !important;
   line-height: 1.65;
   font-size: 13px;
   margin: 0;
   padding: 0;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
 }
 
 h1 {
@@ -137,13 +148,15 @@ kbd {
 }
 
 pre.code-block {
-  background-color: #0f172a;
+  background-color: #0f172a !important;
   border-radius: 6px;
   padding: 12px 14px;
   overflow-x: auto;
   margin: 8px 0 14px 0;
   page-break-inside: avoid;
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
 }
 
 pre.code-block code {
@@ -172,11 +185,13 @@ table {
 }
 
 th {
-  background-color: #f8fafc;
+  background-color: #f8fafc !important;
   color: #0f172a;
   font-weight: 600;
   border: 1px solid #cbd5e1;
   padding: 7px 10px;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
 }
 
 td {
@@ -186,7 +201,9 @@ td {
 }
 
 tr:nth-child(even) td {
-  background-color: #f8fafc;
+  background-color: #f8fafc !important;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
 }
 
 blockquote {
@@ -210,13 +227,15 @@ blockquote p {
   border-radius: 4px;
   background-color: #f0fdf4;
   page-break-inside: avoid;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
 }
 
-.callout-note { border-color: #3b82f6; background-color: #eff6ff; }
-.callout-tip { border-color: #10b981; background-color: #ecfdf5; }
-.callout-important { border-color: #8b5cf6; background-color: #f5f3ff; }
-.callout-warning { border-color: #f59e0b; background-color: #fffbeb; }
-.callout-caution { border-color: #ef4444; background-color: #fef2f2; }
+.callout-note { border-color: #3b82f6; background-color: #eff6ff !important; }
+.callout-tip { border-color: #10b981; background-color: #ecfdf5 !important; }
+.callout-important { border-color: #8b5cf6; background-color: #f5f3ff !important; }
+.callout-warning { border-color: #f59e0b; background-color: #fffbeb !important; }
+.callout-caution { border-color: #ef4444; background-color: #fef2f2 !important; }
 
 .callout-title {
   font-weight: 700;
@@ -253,14 +272,25 @@ DARK_THEME = """
 
 * { box-sizing: border-box; }
 
+html {
+  background-color: #0f172a !important;
+  color: #e2e8f0;
+  margin: 0;
+  padding: 0;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
 body {
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   color: #e2e8f0;
-  background-color: #0f172a;
+  background-color: #0f172a !important;
   line-height: 1.65;
   font-size: 13px;
   margin: 0;
   padding: 0;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
 }
 
 h1 { font-size: 22px; color: #f8fafc; border-bottom: 2px solid #334155; padding-bottom: 8px; margin: 0 0 14px 0; }
@@ -275,11 +305,13 @@ li { margin-bottom: 4px; }
 code {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11.5px;
-  background-color: #1e293b;
+  background-color: #1e293b !important;
   color: #38bdf8;
   padding: 2px 5px;
   border-radius: 4px;
   border: 1px solid #334155;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
 }
 
 kbd {
@@ -290,12 +322,14 @@ kbd {
   font-weight: 600;
   line-height: 1.2;
   color: #f1f5f9;
-  background-color: #1e293b;
+  background-color: #1e293b !important;
   border: 1px solid #475569;
   border-bottom: 2px solid #64748b;
   border-radius: 4px;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
   vertical-align: middle;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
 }
 
 .math-inline {
@@ -306,17 +340,19 @@ kbd {
 }
 
 pre.code-block {
-  background-color: #020617;
+  background-color: #020617 !important;
   border-radius: 6px;
   padding: 12px 14px;
   overflow-x: auto;
   margin: 8px 0 14px 0;
   border: 1px solid #1e293b;
   page-break-inside: avoid;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
 }
 
 pre.code-block code {
-  background-color: transparent;
+  background-color: transparent !important;
   color: #e2e8f0;
   border: none;
   padding: 0;
@@ -329,25 +365,47 @@ pre.code-block code {
 
 .table-container { margin: 12px 0 16px 0; page-break-inside: avoid; overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 12px; }
-th { background-color: #1e293b; color: #f8fafc; font-weight: 600; border: 1px solid #334155; padding: 7px 10px; }
+th {
+  background-color: #1e293b !important;
+  color: #f8fafc;
+  font-weight: 600;
+  border: 1px solid #334155;
+  padding: 7px 10px;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
 td { border: 1px solid #334155; padding: 6px 10px; color: #cbd5e1; }
-tr:nth-child(even) td { background-color: #1e293b; }
+tr:nth-child(even) td {
+  background-color: #1e293b !important;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
 
 blockquote {
   margin: 10px 0;
   padding: 8px 14px;
   border-left: 4px solid #38bdf8;
-  background-color: #1e293b;
+  background-color: #1e293b !important;
   color: #94a3b8;
   border-radius: 0 4px 4px 0;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
 }
 
-.callout { margin: 12px 0; padding: 10px 14px; border-left: 4px solid #38bdf8; border-radius: 4px; background-color: #1e293b; }
-.callout-note { border-color: #38bdf8; background-color: #0c4a6e; }
-.callout-tip { border-color: #34d399; background-color: #064e3b; }
-.callout-important { border-color: #a78bfa; background-color: #4c1d95; }
-.callout-warning { border-color: #fbbf24; background-color: #78350f; }
-.callout-caution { border-color: #f87171; background-color: #7f1d1d; }
+.callout {
+  margin: 12px 0;
+  padding: 10px 14px;
+  border-left: 4px solid #38bdf8;
+  border-radius: 4px;
+  background-color: #1e293b !important;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+.callout-note { border-color: #38bdf8; background-color: #0c4a6e !important; }
+.callout-tip { border-color: #34d399; background-color: #064e3b !important; }
+.callout-important { border-color: #a78bfa; background-color: #4c1d95 !important; }
+.callout-warning { border-color: #fbbf24; background-color: #78350f !important; }
+.callout-caution { border-color: #f87171; background-color: #7f1d1d !important; }
 .callout-title { font-weight: 700; font-size: 12px; margin-bottom: 4px; text-transform: uppercase; color: #f8fafc; }
 
 a { color: #38bdf8; }
@@ -357,13 +415,23 @@ a { color: #38bdf8; }
 ACADEMIC_THEME = """
 @page { margin: 20mm 20mm 20mm 20mm; }
 * { box-sizing: border-box; }
+html {
+  background-color: #ffffff !important;
+  color: #111111;
+  margin: 0;
+  padding: 0;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
 body {
   font-family: 'Times New Roman', Times, Georgia, serif;
   color: #111111;
-  background-color: #ffffff;
+  background-color: #ffffff !important;
   line-height: 1.6;
   font-size: 12pt;
   margin: 0;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
 }
 h1 { font-size: 18pt; font-weight: bold; text-align: center; margin-bottom: 18pt; border-bottom: 1px solid #111; padding-bottom: 6pt; }
 h2 { font-size: 14pt; font-weight: bold; margin-top: 16pt; margin-bottom: 6pt; border-bottom: 0.5pt solid #888; page-break-after: avoid; }
@@ -372,7 +440,7 @@ p, li { text-align: justify; margin: 4pt 0 6pt 0; }
 code { font-family: 'Courier New', monospace; font-size: 10pt; background: #f4f4f4; padding: 1pt 3pt; border: 0.5pt solid #ddd; }
 kbd { font-family: 'Courier New', monospace; font-size: 9.5pt; border: 1pt solid #444; padding: 1pt 4pt; background: #f9f9f9; }
 .math-inline { font-style: italic; font-family: 'Times New Roman', serif; }
-pre.code-block { background: #f8f8f8; border: 1pt solid #ccc; padding: 8pt; font-size: 9.5pt; margin: 8pt 0; page-break-inside: avoid; }
+pre.code-block { background: #f8f8f8 !important; border: 1pt solid #ccc; padding: 8pt; font-size: 9.5pt; margin: 8pt 0; page-break-inside: avoid; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
 pre.code-block code { background: transparent; border: none; padding: 0; }
 table { width: 100%; border-collapse: collapse; margin: 12pt 0; font-size: 10pt; page-break-inside: avoid; }
 th { border-top: 1.5pt solid #111; border-bottom: 1pt solid #111; padding: 4pt 6pt; text-align: left; }
@@ -442,19 +510,13 @@ SAFE_INLINE_TAGS = [
 # ----------------------------------------------------------------------
 
 def inline_format(text: str) -> str:
-    # 1. Escape basic HTML entities
     text = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
     
-    # 2. Restore allowed safe inline HTML tags (like <kbd>, <sub>, <sup>, etc.)
     for tag in SAFE_INLINE_TAGS:
-        # Standard closing tags </tag>
         text = re.sub(rf'&lt;/{tag}&gt;', f'</{tag}>', text, flags=re.IGNORECASE)
-        # Self closing <tag/> or <tag>
         text = re.sub(rf'&lt;{tag}\s*/?&gt;', f'<{tag}>', text, flags=re.IGNORECASE)
-        # Tags with attributes <tag class="...">
         text = re.sub(rf'&lt;({tag}\s+[^&gt;]+)&gt;', r'<\1>', text, flags=re.IGNORECASE)
     
-    # 3. Parse LaTeX math / arrow expressions: $\rightarrow$ or $x \approx y$
     def replace_math_block(match):
         content = match.group(1).strip()
         for symbol, replacement in MATH_SYMBOLS.items():
@@ -463,26 +525,18 @@ def inline_format(text: str) -> str:
 
     text = re.sub(r'\$([^\$]+)\$', replace_math_block, text)
 
-    # 4. Also replace standalone LaTeX symbols outside math delimiters
     for symbol, replacement in MATH_SYMBOLS.items():
         text = text.replace(symbol, replacement)
 
-    # 5. Images: ![alt](url)
     text = re.sub(r'!\[([^\]]*)\]\(([^\)]+)\)', r'<img src="\2" alt="\1" />', text)
-    # 6. Inline code: `code`
     text = re.sub(r'`([^`]+)`', r'<code>\1</code>', text)
-    # 7. Bold italic: ***text*** or ___text___
     text = re.sub(r'\*\*\*([^\*]+)\*\*\*', r'<strong><em>\1</em></strong>', text)
     text = re.sub(r'___([^_]+)___', r'<strong><em>\1</em></strong>', text)
-    # 8. Bold: **text** or __text__
     text = re.sub(r'\*\*([^\*]+)\*\*', r'<strong>\1</strong>', text)
     text = re.sub(r'__([^_]+)__', r'<strong>\1</strong>', text)
-    # 9. Italic: *text* or _text_
     text = re.sub(r'\*([^\*]+)\*', r'<em>\1</em>', text)
     text = re.sub(r'(?<!\w)_([^_]+)_(?!\w)', r'<em>\1</em>', text)
-    # 10. Strikethrough: ~~text~~
     text = re.sub(r'~~([^~]+)~~', r'<del>\1</del>', text)
-    # 11. Links: [text](url)
     text = re.sub(r'\[([^\]]+)\]\(([^\)]+)\)', r'<a href="\2">\1</a>', text)
     
     return text
@@ -505,7 +559,6 @@ def parse_markdown(md_content: str) -> str:
     for line in lines:
         stripped = line.strip()
         
-        # 1. Code blocks
         if stripped.startswith("```"):
             if in_code_block:
                 in_code_block = False
@@ -528,12 +581,10 @@ def parse_markdown(md_content: str) -> str:
             code_content.append(line)
             continue
             
-        # 2. Page Break Directive
         if stripped in ["\\pagebreak", "<!-- pagebreak -->", "<div class=\"page-break\"></div>"]:
             html_lines.append("<div class='page-break'></div>")
             continue
             
-        # 3. Callout Boxes (> [!NOTE], > [!TIP], > [!IMPORTANT], > [!WARNING], > [!CAUTION])
         callout_match = re.match(r'^>\s*\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]', stripped, re.IGNORECASE)
         if callout_match:
             if in_ul: html_lines.append("</ul>"); in_ul = False
@@ -547,7 +598,6 @@ def parse_markdown(md_content: str) -> str:
             html_lines.append(f"<div class='callout callout-{callout_type}'><div class='callout-title'>{callout_type}</div>")
             continue
             
-        # 4. Blockquotes
         if stripped.startswith(">"):
             quote_text = stripped[1:].strip()
             if in_callout:
@@ -566,13 +616,11 @@ def parse_markdown(md_content: str) -> str:
                 html_lines.append("</div>")
                 in_callout = False
 
-        # 5. Tables
         if stripped.startswith("|") and stripped.endswith("|"):
             if in_ul: html_lines.append("</ul>"); in_ul = False
             if in_ol: html_lines.append("</ol>"); in_ol = False
             parts = [p.strip() for p in stripped[1:-1].split("|")]
             
-            # Header separator row: |:---|:---:|---:|
             if all(re.match(r"^:?-+:?$", p) for p in parts if p):
                 continue
                 
@@ -593,14 +641,12 @@ def parse_markdown(md_content: str) -> str:
                 html_lines.append("</tbody></table></div>")
                 in_table = False
 
-        # 6. Unordered Lists
         if re.match(r"^[\*\-\+]\s+", stripped):
             if in_ol: html_lines.append("</ol>"); in_ol = False
             if not in_ul:
                 in_ul = True
                 html_lines.append("<ul>")
             item_text = re.sub(r"^[\*\-\+]\s+", "", stripped)
-            # Checkbox support
             if item_text.startswith("[ ] "):
                 item_text = f"<input type='checkbox' disabled /> {item_text[4:]}"
             elif item_text.startswith("[x] ") or item_text.startswith("[X] "):
@@ -612,7 +658,6 @@ def parse_markdown(md_content: str) -> str:
                 html_lines.append("</ul>")
                 in_ul = False
 
-        # 7. Ordered Lists
         if re.match(r"^\d+\.\s+", stripped):
             if in_ul: html_lines.append("</ul>"); in_ul = False
             if not in_ol:
@@ -626,16 +671,13 @@ def parse_markdown(md_content: str) -> str:
                 html_lines.append("</ol>")
                 in_ol = False
 
-        # Empty lines
         if not stripped:
             continue
 
-        # 8. Horizontal rules
         if re.match(r"^(\-{3,}|\*{3,}|_{3,})$", stripped):
             html_lines.append("<hr/>")
             continue
 
-        # 9. Headings
         if stripped.startswith("# "):
             html_lines.append(f"<h1>{inline_format(stripped[2:])}</h1>")
         elif stripped.startswith("## "):
@@ -649,10 +691,8 @@ def parse_markdown(md_content: str) -> str:
         elif stripped.startswith("###### "):
             html_lines.append(f"<h6>{inline_format(stripped[7:])}</h6>")
         else:
-            # Paragraph
             html_lines.append(f"<p>{inline_format(stripped)}</p>")
 
-    # Close trailing open tags
     if in_ul: html_lines.append("</ul>")
     if in_ol: html_lines.append("</ol>")
     if in_table: html_lines.append("</tbody></table></div>")
@@ -666,7 +706,6 @@ def parse_markdown(md_content: str) -> str:
 # ----------------------------------------------------------------------
 
 def find_chromium_browser() -> str:
-    """Discovers available Chromium-based browser on Windows, macOS, or Linux."""
     candidates = []
     
     if sys.platform == "win32":
@@ -686,7 +725,7 @@ def find_chromium_browser() -> str:
             "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser",
             "/Applications/Chromium.app/Contents/MacOS/Chromium",
         ]
-    else: # Linux / Unix
+    else:
         for bin_name in ["google-chrome", "google-chrome-stable", "chromium", "chromium-browser", "microsoft-edge"]:
             path = shutil.which(bin_name)
             if path:
@@ -714,7 +753,6 @@ def convert(
     browser_path: str = None,
     keep_html: bool = False
 ) -> str:
-    """Converts a markdown file to PDF using headless Chromium."""
     input_path = Path(input_file).resolve()
     if not input_path.exists():
         raise FileNotFoundError(f"Markdown file not found: {input_path}")
@@ -724,7 +762,6 @@ def convert(
     else:
         output_path = Path(output_file).resolve()
 
-    # Browser discovery
     browser_exe = browser_path or find_chromium_browser()
     if not browser_exe or not os.path.exists(browser_exe):
         raise RuntimeError(
@@ -732,11 +769,9 @@ def convert(
             "Please install Microsoft Edge / Chrome or specify --browser-path."
         )
 
-    # Read Markdown
     with open(input_path, "r", encoding="utf-8") as f:
         md_text = f.read()
 
-    # Select / Compose CSS
     if custom_css and os.path.exists(custom_css):
         with open(custom_css, "r", encoding="utf-8") as f:
             css_rules = f.read()
@@ -769,13 +804,11 @@ def convert(
 </body>
 </html>"""
 
-    # Write temporary HTML
     temp_dir = tempfile.gettempdir()
     temp_html_path = Path(temp_dir) / f"{input_path.stem}_temp_print.html"
     with open(temp_html_path, "w", encoding="utf-8") as f:
         f.write(full_html)
 
-    # Convert to URL format
     html_url = temp_html_path.as_uri()
 
     cmd = [
