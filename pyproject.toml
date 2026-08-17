@@ -9,7 +9,6 @@ description = "Zero-dependency Markdown to PDF converter powered by headless Chr
 readme = "README.md"
 authors = [{ name = "Adil Arbaz Khan", email = "adilarbazkhan199@gmail.com" }]
 license = { text = "MIT" }
-readme = "README.md"
 urls = { Homepage = "https://github.com/Adil-Arbaz-Khan/md2pdf", Repository = "https://github.com/Adil-Arbaz-Khan/md2pdf" }
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -22,3 +21,6 @@ dependencies = []
 
 [project.scripts]
 md2pdf = "md2pdf:main"
+
+[tool.setuptools]
+py-modules = ["md2pdf"]
