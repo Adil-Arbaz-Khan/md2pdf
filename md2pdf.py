@@ -18,7 +18,7 @@ import tempfile
 import shutil
 from pathlib import Path
 
-__version__ = "1.0.2"
+__version__ = "1.0.3"
 
 # ----------------------------------------------------------------------
 # CSS Design Themes
@@ -29,6 +29,10 @@ DEFAULT_THEME = """
 
 * {
   box-sizing: border-box;
+}
+
+@page {
+  background-color: #ffffff;
 }
 
 html {
@@ -272,6 +276,10 @@ DARK_THEME = """
 
 * { box-sizing: border-box; }
 
+@page {
+  background-color: #0f172a;
+}
+
 html {
   background-color: #0f172a !important;
   color: #e2e8f0;
@@ -413,7 +421,7 @@ a { color: #38bdf8; }
 """
 
 ACADEMIC_THEME = """
-@page { margin: 20mm 20mm 20mm 20mm; }
+@page { margin: 20mm 20mm 20mm 20mm; background-color: #ffffff; }
 * { box-sizing: border-box; }
 html {
   background-color: #ffffff !important;
@@ -430,6 +438,7 @@ body {
   line-height: 1.6;
   font-size: 12pt;
   margin: 0;
+  padding: 0;
   -webkit-print-color-adjust: exact !important;
   print-color-adjust: exact !important;
 }
@@ -781,15 +790,7 @@ def convert(
     page_css = f"""
     @page {{
         size: {page_size} {orientation};
-        margin: 0;
-    }}
-    html {{
-        margin: 0;
-        padding: 0;
-    }}
-    body {{
-        margin: 0;
-        padding: {margin};
+        margin: {margin};
     }}
     """
 

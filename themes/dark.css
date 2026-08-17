@@ -2,6 +2,10 @@
 
 * { box-sizing: border-box; }
 
+@page {
+  background-color: #0f172a;
+}
+
 html {
   background-color: #0f172a !important;
   color: #e2e8f0;
