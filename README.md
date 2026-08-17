@@ -2,35 +2,64 @@
 
 > **Zero-dependency, high-fidelity Markdown to PDF converter powered by your system's built-in Chromium / Edge engine.**
 
-Convert Markdown documents into publication-ready, beautifully styled PDFs with syntax highlighting, clean typography, tables, and GitHub-style callouts — without installing massive LaTeX toolchains, Pandoc, Node.js, or heavyweight Python dependencies.
+Convert Markdown documents into publication-ready, beautifully styled PDFs with syntax highlighting, clean typography, tables, hardware keycaps, LaTeX math symbols, and GitHub-style callouts — without installing massive LaTeX toolchains, Pandoc, Node.js, or heavyweight Python dependencies.
 
 ---
 
 ## ⚡ Highlights
 
-- **Zero External Dependencies:** Built entirely with the Python Standard Library. No `pip install` required.
+- **Zero External Dependencies:** Built entirely with the Python Standard Library. No `pip install` required for basic use.
 - **Native Browser Rendering Engine:** Leverages the headless Microsoft Edge, Google Chrome, or Brave browser already on your machine for pixel-perfect CSS3 rendering.
+- **2 Flexible Usage Modes:** Run as a single portable file anywhere, or install globally as a system CLI command.
 - **Built-in Themes:** Comes with `default` (modern clean), `dark` (developer dark mode), and `academic` (formal serif paper) styles.
 - **GitHub Alert Callouts:** Full support for `> [!NOTE]`, `> [!TIP]`, `> [!IMPORTANT]`, `> [!WARNING]`, and `> [!CAUTION]`.
+- **Keycaps & Math Symbols:** Native rendering of `<kbd>` tags and LaTeX math/arrows (`$\rightarrow$`, `$\approx$`, `$\le$`, etc.).
 - **Advanced Markdown Support:** Tables, code blocks, checklists (`- [x]`), images, blockquotes, and explicit page breaks.
 - **Cross-Platform:** Works seamlessly across Windows, macOS, and Linux.
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Two Ways to Use md2pdf
 
-### 1. Requirements
-* **Python 3.8+**
-* Any Chromium-based browser (*Microsoft Edge, Google Chrome, Brave, or Chromium*).
+Choose the workflow that suits your preference:
 
-### 2. Basic Usage
-
-Convert any Markdown file to PDF with a single command:
+### 🔹 Method 1: Portable Mode (Zero Installation Needed)
+If you do not want to install anything on your system, simply copy [`md2pdf.py`](md2pdf.py) into the folder where your `.md` file is located and run it with Python:
 
 ```bash
+# 1. Place md2pdf.py in your project folder
+# 2. Run the converter directly:
 python md2pdf.py document.md
 ```
-*(This automatically creates `document.pdf` in the same directory).*
+
+> **Why choose this?**
+> * 100% portable — drop the single `.py` file onto a USB drive, server, or project folder.
+> * Requires nothing except Python and your existing web browser.
+
+---
+
+### 🔹 Method 2: Global CLI Mode (Run from ANY Folder)
+If you frequently work with Markdown across different projects and directories, install `md2pdf` globally once. You can then execute `md2pdf` anywhere without needing `md2pdf.py` in that folder:
+
+#### Step 1: Install Globally
+Clone or download the repo and install it in editable mode:
+```bash
+git clone https://github.com/Adil-Arbaz-Khan/md2pdf.git
+cd md2pdf
+pip install -e .
+```
+*(Or install directly from GitHub without cloning):*
+```bash
+pip install git+https://github.com/Adil-Arbaz-Khan/md2pdf.git
+```
+
+#### Step 2: Use Anywhere on Your System
+Open a terminal in **any** folder on your computer and run:
+```bash
+# In any directory (e.g. C:\Users\Documents, D:\Projects):
+md2pdf notes.md
+md2pdf report.md -t dark -o final_report.pdf
+```
 
 ---
 
@@ -72,17 +101,21 @@ options:
 
 ### 1. Export with Dark Mode Theme
 ```bash
+# Portable mode:
 python md2pdf.py notes.md -t dark -o notes_dark.pdf
+
+# Global CLI mode:
+md2pdf notes.md -t dark -o notes_dark.pdf
 ```
 
 ### 2. Export as Landscape US Letter Document
 ```bash
-python md2pdf.py presentation.md -s Letter -r landscape
+md2pdf presentation.md -s Letter -r landscape
 ```
 
 ### 3. Apply Custom CSS Stylesheet
 ```bash
-python md2pdf.py report.md -c my_branding.css -o final_report.pdf
+md2pdf report.md -c my_branding.css -o final_report.pdf
 ```
 
 ### 4. Explicit Page Breaks
@@ -118,7 +151,7 @@ Content starting at the top of page two...
 └──────────────┘                                   └────────────────┘                                  └──────────────┘
 ```
 
-1. **Parser:** Parses Markdown structures (headers, code snippets, lists, tables, callouts) into semantic HTML5.
+1. **Parser:** Parses Markdown structures (headers, code snippets, lists, tables, callouts, keycaps, math) into semantic HTML5.
 2. **Styler:** Injects tailored CSS3 with print media directives (`@page`, `page-break-inside: avoid`).
 3. **Renderer:** Launches Chromium in headless mode to rasterize the DOM and compile the vector PDF via `--print-to-pdf`.
 
@@ -149,7 +182,7 @@ print(f"Generated PDF: {pdf_path}")
 
 ## 🤝 Contributing
 
-Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](../../issues).
+Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/Adil-Arbaz-Khan/md2pdf/issues).
 
 ---
 

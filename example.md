@@ -4,7 +4,25 @@ Welcome to **md2pdf**. This sample document illustrates how various Markdown syn
 
 ---
 
-## 1. Callout Alert Boxes
+## 1. Two Ways to Run md2pdf
+
+### 🔹 Method 1: Portable / Local Mode (Zero Installation)
+Drop `md2pdf.py` into the exact folder where your Markdown file lives and run:
+```powershell
+python md2pdf.py example.md
+```
+> *Ideal for quick one-off exports, thumb drives, and zero-setup environments.*
+
+### 🔹 Method 2: Global CLI Mode (Run Anywhere)
+Install once using `pip install -e .` and run from **any directory** on your computer without needing `md2pdf.py` in that folder:
+```powershell
+md2pdf example.md -t dark -o example_dark.pdf
+```
+> *Ideal for daily development across multiple workspaces.*
+
+---
+
+## 2. Callout Alert Boxes
 
 > [!NOTE]
 > This is an informational callout block. It uses subtle slate blue borders and backgrounds.
@@ -17,7 +35,7 @@ Welcome to **md2pdf**. This sample document illustrates how various Markdown syn
 
 ---
 
-## 2. Structured Data & Tables
+## 3. Structured Data & Tables
 
 | Category | Parameter | Default Value | Notes |
 | :--- | :--- | :---: | :--- |
@@ -27,7 +45,7 @@ Welcome to **md2pdf**. This sample document illustrates how various Markdown syn
 
 ---
 
-## 3. Syntax Highlighted Code Blocks
+## 4. Syntax Highlighted Code Blocks
 
 ```powershell
 # Fast PIN Unlock with zero artificial animation delay:
@@ -39,7 +57,7 @@ adb shell "input keyevent KEYCODE_WAKEUP && cmd statusbar expand-settings && sle
 
 ---
 
-## 4. Checklist & Task Management
+## 5. Checklist & Task Management
 
 - [x] Implement zero-dependency Markdown parser
 - [x] Connect headless Edge/Chromium engine
@@ -48,13 +66,13 @@ adb shell "input keyevent KEYCODE_WAKEUP && cmd statusbar expand-settings && sle
 
 ---
 
-## 5. Inline Formatting
+## 6. Inline Formatting
 
-You can write ***bold italic text***, ~~strikethrough text~~, `inline code snippets`, and [hyperlinks](https://github.com).
+You can write ***bold italic text***, ~~strikethrough text~~, `inline code snippets`, and [hyperlinks](https://github.com/Adil-Arbaz-Khan/md2pdf).
 
 ---
 
-## 6. Keyboard Shortcuts & Math / Arrow Symbols
+## 7. Keyboard Shortcuts & Math / Arrow Symbols
 
 * **Keyboard Keys:** Press <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> to open the Command Palette, or <kbd>Alt</kbd> + <kbd>F4</kbd> to exit.
 * **Arrow & Flow Sequences:** Client $\rightarrow$ Daemon $\rightarrow$ Hardware execution.
