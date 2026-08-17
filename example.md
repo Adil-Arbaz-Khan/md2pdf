@@ -51,3 +51,11 @@ adb shell "input keyevent KEYCODE_WAKEUP && cmd statusbar expand-settings && sle
 ## 5. Inline Formatting
 
 You can write ***bold italic text***, ~~strikethrough text~~, `inline code snippets`, and [hyperlinks](https://github.com).
+
+---
+
+## 6. Keyboard Shortcuts & Math / Arrow Symbols
+
+* **Keyboard Keys:** Press <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> to open the Command Palette, or <kbd>Alt</kbd> + <kbd>F4</kbd> to exit.
+* **Arrow & Flow Sequences:** Client $\rightarrow$ Daemon $\rightarrow$ Hardware execution.
+* **Mathematical Notations:** $X \approx 100$, $A \neq B$, $P \le Q$, $M \ge N$, $5 \times 10^3$, $360^\circ$ rotation, and $\pm 5\%$.

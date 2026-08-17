@@ -15,9 +15,10 @@ import re
 import argparse
 import subprocess
 import tempfile
+import shutil
 from pathlib import Path
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 # ----------------------------------------------------------------------
 # CSS Design Themes
@@ -110,6 +111,29 @@ code {
   padding: 2px 5px;
   border-radius: 4px;
   border: 1px solid #e2e8f0;
+}
+
+kbd {
+  display: inline-block;
+  padding: 1.5px 5.5px;
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #1e293b;
+  background-color: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-bottom: 2px solid #94a3b8;
+  border-radius: 4px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08);
+  vertical-align: middle;
+}
+
+.math-inline {
+  font-family: 'Times New Roman', 'Cambria Math', Georgia, serif;
+  font-style: italic;
+  padding: 0 2px;
+  color: #0f172a;
 }
 
 pre.code-block {
@@ -258,6 +282,29 @@ code {
   border: 1px solid #334155;
 }
 
+kbd {
+  display: inline-block;
+  padding: 1.5px 5.5px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #f1f5f9;
+  background-color: #1e293b;
+  border: 1px solid #475569;
+  border-bottom: 2px solid #64748b;
+  border-radius: 4px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+  vertical-align: middle;
+}
+
+.math-inline {
+  font-family: 'Times New Roman', 'Cambria Math', Georgia, serif;
+  font-style: italic;
+  color: #38bdf8;
+  padding: 0 2px;
+}
+
 pre.code-block {
   background-color: #020617;
   border-radius: 6px;
@@ -323,6 +370,8 @@ h2 { font-size: 14pt; font-weight: bold; margin-top: 16pt; margin-bottom: 6pt; b
 h3 { font-size: 12pt; font-weight: bold; margin-top: 12pt; margin-bottom: 4pt; page-break-after: avoid; }
 p, li { text-align: justify; margin: 4pt 0 6pt 0; }
 code { font-family: 'Courier New', monospace; font-size: 10pt; background: #f4f4f4; padding: 1pt 3pt; border: 0.5pt solid #ddd; }
+kbd { font-family: 'Courier New', monospace; font-size: 9.5pt; border: 1pt solid #444; padding: 1pt 4pt; background: #f9f9f9; }
+.math-inline { font-style: italic; font-family: 'Times New Roman', serif; }
 pre.code-block { background: #f8f8f8; border: 1pt solid #ccc; padding: 8pt; font-size: 9.5pt; margin: 8pt 0; page-break-inside: avoid; }
 pre.code-block code { background: transparent; border: none; padding: 0; }
 table { width: 100%; border-collapse: collapse; margin: 12pt 0; font-size: 10pt; page-break-inside: avoid; }
@@ -339,33 +388,101 @@ THEMES = {
 }
 
 # ----------------------------------------------------------------------
+# Math & Special Symbols Mapping
+# ----------------------------------------------------------------------
+
+MATH_SYMBOLS = {
+    r'\rightarrow': '&rarr;',
+    r'\leftarrow': '&larr;',
+    r'\leftrightarrow': '&harr;',
+    r'\Rightarrow': '&rArr;',
+    r'\Leftarrow': '&lArr;',
+    r'\Leftrightarrow': '&hArr;',
+    r'\to': '&rarr;',
+    r'\approx': '&asymp;',
+    r'\sim': '&sim;',
+    r'\neq': '&ne;',
+    r'\ne': '&ne;',
+    r'\le': '&le;',
+    r'\leq': '&le;',
+    r'\ge': '&ge;',
+    r'\geq': '&ge;',
+    r'\pm': '&plusmn;',
+    r'\times': '&times;',
+    r'\div': '&divide;',
+    r'\cdot': '&middot;',
+    r'\dots': '&hellip;',
+    r'\ldots': '&hellip;',
+    r'\cdots': '&hellip;',
+    r'\infty': '&infin;',
+    r'\sum': '&sum;',
+    r'\prod': '&prod;',
+    r'\partial': '&part;',
+    r'\alpha': '&alpha;',
+    r'\beta': '&beta;',
+    r'\gamma': '&gamma;',
+    r'\delta': '&delta;',
+    r'\theta': '&theta;',
+    r'\lambda': '&lambda;',
+    r'\mu': '&mu;',
+    r'\pi': '&pi;',
+    r'\sigma': '&sigma;',
+    r'\omega': '&omega;',
+    r'\degree': '&deg;',
+    r'^\circ': '&deg;',
+}
+
+SAFE_INLINE_TAGS = [
+    'kbd', 'sub', 'sup', 'mark', 'span', 'b', 'i', 'u',
+    'strong', 'em', 'del', 'code', 'small', 'abbr', 'wbr', 'br', 'hr'
+]
+
+# ----------------------------------------------------------------------
 # Markdown Parser Engine
 # ----------------------------------------------------------------------
 
 def inline_format(text: str) -> str:
-    # Escape HTML characters first
+    # 1. Escape basic HTML entities
     text = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
     
-    # Restore allowed self-closing tags
-    text = text.replace("&lt;br&gt;", "<br/>").replace("&lt;br/&gt;", "<br/>").replace("&lt;br /&gt;", "<br/>")
-    text = text.replace("&lt;hr&gt;", "<hr/>").replace("&lt;hr/&gt;", "<hr/>")
+    # 2. Restore allowed safe inline HTML tags (like <kbd>, <sub>, <sup>, etc.)
+    for tag in SAFE_INLINE_TAGS:
+        # Standard closing tags </tag>
+        text = re.sub(rf'&lt;/{tag}&gt;', f'</{tag}>', text, flags=re.IGNORECASE)
+        # Self closing <tag/> or <tag>
+        text = re.sub(rf'&lt;{tag}\s*/?&gt;', f'<{tag}>', text, flags=re.IGNORECASE)
+        # Tags with attributes <tag class="...">
+        text = re.sub(rf'&lt;({tag}\s+[^&gt;]+)&gt;', r'<\1>', text, flags=re.IGNORECASE)
     
-    # Images: ![alt](url)
+    # 3. Parse LaTeX math / arrow expressions: $\rightarrow$ or $x \approx y$
+    def replace_math_block(match):
+        content = match.group(1).strip()
+        for symbol, replacement in MATH_SYMBOLS.items():
+            content = content.replace(symbol, replacement)
+        return f"<span class='math-inline'>{content}</span>"
+
+    text = re.sub(r'\$([^\$]+)\$', replace_math_block, text)
+
+    # 4. Also replace standalone LaTeX symbols outside math delimiters
+    for symbol, replacement in MATH_SYMBOLS.items():
+        text = text.replace(symbol, replacement)
+
+    # 5. Images: ![alt](url)
     text = re.sub(r'!\[([^\]]*)\]\(([^\)]+)\)', r'<img src="\2" alt="\1" />', text)
-    # Inline code: `code`
+    # 6. Inline code: `code`
     text = re.sub(r'`([^`]+)`', r'<code>\1</code>', text)
-    # Bold italic: ***text*** or ___text___
+    # 7. Bold italic: ***text*** or ___text___
     text = re.sub(r'\*\*\*([^\*]+)\*\*\*', r'<strong><em>\1</em></strong>', text)
     text = re.sub(r'___([^_]+)___', r'<strong><em>\1</em></strong>', text)
-    # Bold: **text** or __text__
+    # 8. Bold: **text** or __text__
     text = re.sub(r'\*\*([^\*]+)\*\*', r'<strong>\1</strong>', text)
     text = re.sub(r'__([^_]+)__', r'<strong>\1</strong>', text)
-    # Italic: *text* or _text_
+    # 9. Italic: *text* or _text_
     text = re.sub(r'\*([^\*]+)\*', r'<em>\1</em>', text)
     text = re.sub(r'(?<!\w)_([^_]+)_(?!\w)', r'<em>\1</em>', text)
-    # Strikethrough: ~~text~~
+    # 10. Strikethrough: ~~text~~
     text = re.sub(r'~~([^~]+)~~', r'<del>\1</del>', text)
-    # Links: [text](url)
+    # 11. Links: [text](url)
     text = re.sub(r'\[([^\]]+)\]\(([^\)]+)\)', r'<a href="\2">\1</a>', text)
     
     return text
@@ -397,7 +514,6 @@ def parse_markdown(md_content: str) -> str:
                 html_lines.append(f"<pre class='code-block'><code class='lang-{code_lang}'>{code_text}</code></pre>")
                 code_content = []
             else:
-                # Close lists / tables if open
                 if in_ul: html_lines.append("</ul>"); in_ul = False
                 if in_ol: html_lines.append("</ol>"); in_ol = False
                 if in_table: html_lines.append("</tbody></table></div>"); in_table = False
@@ -417,7 +533,7 @@ def parse_markdown(md_content: str) -> str:
             html_lines.append("<div class='page-break'></div>")
             continue
             
-        # 3. Callout Boxes (> [!NOTE], > [!TIP], > [!WARNING], > [!IMPORTANT], > [!CAUTION])
+        # 3. Callout Boxes (> [!NOTE], > [!TIP], > [!IMPORTANT], > [!WARNING], > [!CAUTION])
         callout_match = re.match(r'^>\s*\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]', stripped, re.IGNORECASE)
         if callout_match:
             if in_ul: html_lines.append("</ul>"); in_ul = False

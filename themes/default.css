@@ -77,6 +77,29 @@ code {
   border: 1px solid #e2e8f0;
 }
 
+kbd {
+  display: inline-block;
+  padding: 1.5px 5.5px;
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #1e293b;
+  background-color: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-bottom: 2px solid #94a3b8;
+  border-radius: 4px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08);
+  vertical-align: middle;
+}
+
+.math-inline {
+  font-family: 'Times New Roman', 'Cambria Math', Georgia, serif;
+  font-style: italic;
+  padding: 0 2px;
+  color: #0f172a;
+}
+
 pre.code-block {
   background-color: #0f172a;
   border-radius: 6px;
