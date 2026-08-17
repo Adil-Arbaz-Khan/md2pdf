@@ -62,7 +62,8 @@ adb shell "input keyevent KEYCODE_WAKEUP && cmd statusbar expand-settings && sle
 - [x] Implement zero-dependency Markdown parser
 - [x] Connect headless Edge/Chromium engine
 - [x] Configure A4 print media styling
-- [ ] Add PDF watermark support
+- [x] Native Mermaid.js diagrams & timelines
+- [x] Automatic local & remote image embedding
 
 ---
 
@@ -77,3 +78,40 @@ You can write ***bold italic text***, ~~strikethrough text~~, `inline code snipp
 * **Keyboard Keys:** Press <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> to open the Command Palette, or <kbd>Alt</kbd> + <kbd>F4</kbd> to exit.
 * **Arrow & Flow Sequences:** Client $\rightarrow$ Daemon $\rightarrow$ Hardware execution.
 * **Mathematical Notations:** $X \approx 100$, $A \neq B$, $P \le Q$, $M \ge N$, $5 \times 10^3$, $360^\circ$ rotation, and $\pm 5\%$.
+
+---
+
+## 8. Mermaid Diagrams (Flowcharts & Graphs)
+
+### Graph LR (Left-to-Right Architecture)
+```mermaid
+graph LR
+    Client[Client Device] -->|HTTPS POST| Gateway[API Gateway]
+    Gateway --> Auth{Authenticate}
+    Auth -->|Token Valid| Backend[Microservices]
+    Auth -->|Invalid| Reject[401 Unauthorized]
+    Backend --> DB[(Primary DB)]
+```
+
+### Graph TD (Top-Down Execution Flow)
+```mermaid
+graph TD
+    Start([User Input]) --> Parse[Parse Markdown Syntax]
+    Parse --> Styler[Inject CSS3 Design System]
+    Styler --> Chromium[Headless Edge / Chromium]
+    Chromium --> Output([Vector PDF Output])
+```
+
+---
+
+## 9. Timeline & Roadmap
+
+```mermaid
+timeline
+    title md2pdf Evolution Roadmap
+    2024 : v1.0.0 Initial Zero-Dependency Engine
+         : v1.0.1 Keycap & LaTeX Symbol Engine
+    2025 : v1.0.2 Full-Bleed Dark Mode Canvas
+         : v1.0.3 Multi-Page Gutter Margins
+    2026 : v1.1.0 Mermaid Diagrams & Local Images
+```

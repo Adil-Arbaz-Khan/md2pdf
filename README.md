@@ -2,7 +2,7 @@
 
 > **Zero-dependency, high-fidelity Markdown to PDF converter powered by your system's built-in Chromium / Edge engine.**
 
-Convert Markdown documents into publication-ready, beautifully styled PDFs with syntax highlighting, clean typography, tables, hardware keycaps, LaTeX math symbols, and GitHub-style callouts — without installing massive LaTeX toolchains, Pandoc, Node.js, or heavyweight Python dependencies.
+Convert Markdown documents into publication-ready, beautifully styled PDFs with syntax highlighting, clean typography, tables, hardware keycaps, LaTeX math symbols, Mermaid diagrams, local images, and GitHub-style callouts — without installing massive LaTeX toolchains, Pandoc, Node.js, or heavyweight Python dependencies.
 
 ---
 
@@ -10,6 +10,8 @@ Convert Markdown documents into publication-ready, beautifully styled PDFs with 
 
 - **Zero External Dependencies:** Built entirely with the Python Standard Library. No `pip install` required for basic use.
 - **Native Browser Rendering Engine:** Leverages the headless Microsoft Edge, Google Chrome, or Brave browser already on your machine for pixel-perfect CSS3 rendering.
+- **Mermaid.js Diagram Support:** Automatic vector rendering of `graph LR`, `graph TD`, `timeline`, `flowchart`, `sequenceDiagram`, `gantt`, `classDiagram`, `stateDiagram`, `erDiagram`, `pie`, and `gitGraph`.
+- **Local & Remote Image Embedding:** Automatically resolves relative image paths (`![alt](images/photo.png)`) relative to your Markdown file location.
 - **2 Flexible Usage Modes:** Run as a single portable file anywhere, or install globally as a system CLI command.
 - **Built-in Themes:** Comes with `default` (modern clean), `dark` (developer dark mode), and `academic` (formal serif paper) styles.
 - **GitHub Alert Callouts:** Full support for `> [!NOTE]`, `> [!TIP]`, `> [!IMPORTANT]`, `> [!WARNING]`, and `> [!CAUTION]`.
@@ -63,6 +65,41 @@ md2pdf report.md -t dark -o final_report.pdf
 
 ---
 
+## 📊 Diagram & Image Examples
+
+### 1. Mermaid Flowcharts & Graphs (`graph LR`, `graph TD`)
+````markdown
+```mermaid
+graph LR
+    Client[Client UI] -->|REST API| Gateway[API Gateway]
+    Gateway --> Auth{Authenticate}
+    Auth -->|Token Valid| Backend[Microservices]
+    Backend --> DB[(PostgreSQL)]
+```
+````
+
+### 2. Timeline Diagrams
+````markdown
+```mermaid
+timeline
+    title Project Milestones
+    2024 : Initial Release : Zero-Dependency Core
+    2025 : Dark Mode : Full Bleed Canvas
+    2026 : Diagram Engine : Mermaid & Local Images
+```
+````
+
+### 3. Local & Web Images
+```markdown
+# Relative local file path:
+![Project Screenshot](assets/dashboard.png)
+
+# Remote web URL:
+![Architecture Diagram](https://example.com/images/arch.png)
+```
+
+---
+
 ## 📖 Command Line Options
 
 ```text
@@ -97,47 +134,12 @@ options:
 
 ---
 
-## 💡 Examples
-
-### 1. Export with Dark Mode Theme
-```bash
-# Portable mode:
-python md2pdf.py notes.md -t dark -o notes_dark.pdf
-
-# Global CLI mode:
-md2pdf notes.md -t dark -o notes_dark.pdf
-```
-
-### 2. Export as Landscape US Letter Document
-```bash
-md2pdf presentation.md -s Letter -r landscape
-```
-
-### 3. Apply Custom CSS Stylesheet
-```bash
-md2pdf report.md -c my_branding.css -o final_report.pdf
-```
-
-### 4. Explicit Page Breaks
-Insert a manual page break anywhere in your Markdown:
-```markdown
-# Section One
-Content for page one...
-
-\pagebreak
-
-# Section Two
-Content starting at the top of page two...
-```
-
----
-
 ## 🎨 Themes
 
 | Theme | Description | Ideal For |
 | :--- | :--- | :--- |
-| **`default`** | Modern sans-serif (Plus Jakarta Sans), dark code blocks, slate borders | Technical docs, cheatsheets, notes |
-| **`dark`** | Deep slate background, high-contrast text, glowing cyan code blocks | Developer manuals, terminal logs |
+| **`default`** | Modern sans-serif (Plus Jakarta Sans), light theme, crisp vector diagrams | Technical docs, cheatsheets, notes |
+| **`dark`** | Deep slate (`#0f172a`), high-contrast text, dark-mode Mermaid themes | Developer manuals, terminal logs |
 | **`academic`** | Classic serif typography (Times New Roman), justified margins, formal tables | Research papers, formal essays |
 
 ---
@@ -151,9 +153,9 @@ Content starting at the top of page two...
 └──────────────┘                                   └────────────────┘                                  └──────────────┘
 ```
 
-1. **Parser:** Parses Markdown structures (headers, code snippets, lists, tables, callouts, keycaps, math) into semantic HTML5.
+1. **Parser:** Parses Markdown structures (headers, code snippets, lists, tables, callouts, keycaps, math, and diagrams) into semantic HTML5 with local image URI resolution.
 2. **Styler:** Injects tailored CSS3 with print media directives (`@page`, `page-break-inside: avoid`).
-3. **Renderer:** Launches Chromium in headless mode to rasterize the DOM and compile the vector PDF via `--print-to-pdf`.
+3. **Renderer:** Launches Chromium in headless mode with virtual time budgeting to rasterize Mermaid SVGs and compile the vector PDF via `--print-to-pdf`.
 
 ---
 
@@ -171,9 +173,9 @@ pdf_path = convert("README.md")
 pdf_path = convert(
     input_file="report.md",
     output_file="dist/report.pdf",
-    theme="academic",
-    page_size="Letter",
-    margin="20mm 15mm 20mm 15mm"
+    theme="dark",
+    page_size="A4",
+    margin="16mm 14mm 16mm 14mm"
 )
 print(f"Generated PDF: {pdf_path}")
 ```

@@ -5,6 +5,12 @@ md2pdf — Zero-Dependency Markdown to PDF Converter
 Transforms Markdown documents into beautifully styled, print-ready PDF files
 using the local headless Chromium/Edge browser engine already present on your system.
 
+Features:
+- Full Mermaid.js Diagram Support (graph LR, graph TD, timeline, sequence, flowchart, etc.)
+- Automatic Local & Remote Image Resolution (relative file paths & URLs)
+- GitHub-Style Callouts, Hardware Keycaps (<kbd>), LaTeX Math/Arrows
+- Pixel-Perfect Full-Bleed Themes (Default, Dark, Academic)
+
 Author: Adil Arbaz Khan (https://github.com/Adil-Arbaz-Khan)
 License: MIT
 """
@@ -18,7 +24,7 @@ import tempfile
 import shutil
 from pathlib import Path
 
-__version__ = "1.0.3"
+__version__ = "1.1.0"
 
 # ----------------------------------------------------------------------
 # CSS Design Themes
@@ -175,6 +181,27 @@ pre.code-block code {
   word-break: break-all;
 }
 
+/* Mermaid Diagram Containers */
+.mermaid-diagram {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 16px 0;
+  padding: 14px;
+  background-color: #f8fafc !important;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  page-break-inside: avoid;
+  overflow: hidden;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
+.mermaid-diagram svg {
+  max-width: 100% !important;
+  height: auto !important;
+}
+
 .table-container {
   margin: 12px 0 16px 0;
   page-break-inside: avoid;
@@ -263,7 +290,11 @@ a {
 img {
   max-width: 100%;
   height: auto;
-  border-radius: 4px;
+  display: block;
+  margin: 12px auto;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  page-break-inside: avoid;
 }
 
 .page-break {
@@ -371,6 +402,27 @@ pre.code-block code {
   word-break: break-all;
 }
 
+/* Mermaid Diagram Containers Dark */
+.mermaid-diagram {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 16px 0;
+  padding: 14px;
+  background-color: #020617 !important;
+  border: 1px solid #1e293b;
+  border-radius: 6px;
+  page-break-inside: avoid;
+  overflow: hidden;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
+.mermaid-diagram svg {
+  max-width: 100% !important;
+  height: auto !important;
+}
+
 .table-container { margin: 12px 0 16px 0; page-break-inside: avoid; overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 12px; }
 th {
@@ -417,6 +469,18 @@ blockquote {
 .callout-title { font-weight: 700; font-size: 12px; margin-bottom: 4px; text-transform: uppercase; color: #f8fafc; }
 
 a { color: #38bdf8; }
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 12px auto;
+  border-radius: 6px;
+  border: 1px solid #334155;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  page-break-inside: avoid;
+}
+
 .page-break { page-break-before: always; }
 """
 
@@ -451,10 +515,12 @@ kbd { font-family: 'Courier New', monospace; font-size: 9.5pt; border: 1pt solid
 .math-inline { font-style: italic; font-family: 'Times New Roman', serif; }
 pre.code-block { background: #f8f8f8 !important; border: 1pt solid #ccc; padding: 8pt; font-size: 9.5pt; margin: 8pt 0; page-break-inside: avoid; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
 pre.code-block code { background: transparent; border: none; padding: 0; }
+.mermaid-diagram { display: flex; justify-content: center; margin: 12pt 0; padding: 8pt; background: #fafafa; border: 0.5pt solid #ccc; page-break-inside: avoid; }
 table { width: 100%; border-collapse: collapse; margin: 12pt 0; font-size: 10pt; page-break-inside: avoid; }
 th { border-top: 1.5pt solid #111; border-bottom: 1pt solid #111; padding: 4pt 6pt; text-align: left; }
 td { border-bottom: 0.5pt solid #ddd; padding: 4pt 6pt; }
 blockquote { border-left: 2pt solid #666; margin: 8pt 0 8pt 16pt; padding-left: 8pt; font-style: italic; }
+img { max-width: 100%; height: auto; display: block; margin: 10pt auto; page-break-inside: avoid; }
 .page-break { page-break-before: always; }
 """
 
@@ -511,21 +577,40 @@ MATH_SYMBOLS = {
 
 SAFE_INLINE_TAGS = [
     'kbd', 'sub', 'sup', 'mark', 'span', 'b', 'i', 'u',
-    'strong', 'em', 'del', 'code', 'small', 'abbr', 'wbr', 'br', 'hr'
+    'strong', 'em', 'del', 'code', 'small', 'abbr', 'wbr', 'br', 'hr', 'img'
 ]
+
+MERMAID_KEYWORDS = [
+    'graph ', 'graph\n', 'flowchart ', 'flowchart\n', 'sequencediagram',
+    'timeline', 'gantt', 'classdiagram', 'statediagram', 'statediagram-v2',
+    'erdiagram', 'pie', 'gitgraph', 'mindmap', 'quadrantchart', 'sankey-beta', 'block-beta'
+]
+
+def is_mermaid_content(lang: str, code_content: str) -> bool:
+    """Detects if a code block is a Mermaid diagram."""
+    if lang.lower().strip() == "mermaid":
+        return True
+    first_non_empty = ""
+    for line in code_content.splitlines():
+        if line.strip():
+            first_non_empty = line.strip().lower()
+            break
+    return any(first_non_empty.startswith(kw) for kw in MERMAID_KEYWORDS)
 
 # ----------------------------------------------------------------------
 # Markdown Parser Engine
 # ----------------------------------------------------------------------
 
-def inline_format(text: str) -> str:
+def inline_format(text: str, base_dir: Path = None) -> str:
     text = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
     
+    # Restore allowed safe inline HTML tags
     for tag in SAFE_INLINE_TAGS:
         text = re.sub(rf'&lt;/{tag}&gt;', f'</{tag}>', text, flags=re.IGNORECASE)
         text = re.sub(rf'&lt;{tag}\s*/?&gt;', f'<{tag}>', text, flags=re.IGNORECASE)
         text = re.sub(rf'&lt;({tag}\s+[^&gt;]+)&gt;', r'<\1>', text, flags=re.IGNORECASE)
     
+    # LaTeX math expressions: $\rightarrow$ or $x \approx y$
     def replace_math_block(match):
         content = match.group(1).strip()
         for symbol, replacement in MATH_SYMBOLS.items():
@@ -537,20 +622,37 @@ def inline_format(text: str) -> str:
     for symbol, replacement in MATH_SYMBOLS.items():
         text = text.replace(symbol, replacement)
 
-    text = re.sub(r'!\[([^\]]*)\]\(([^\)]+)\)', r'<img src="\2" alt="\1" />', text)
+    # Images: ![alt](url) -> resolve local files if possible
+    def replace_image(match):
+        alt = match.group(1)
+        src = match.group(2).strip()
+        if base_dir and not src.startswith(("http://", "https://", "data:", "file://")):
+            local_target = (base_dir / src).resolve()
+            if local_target.exists():
+                src = local_target.as_uri()
+        return f'<img src="{src}" alt="{alt}" />'
+
+    text = re.sub(r'!\[([^\]]*)\]\(([^\)]+)\)', replace_image, text)
+
+    # Inline code: `code`
     text = re.sub(r'`([^`]+)`', r'<code>\1</code>', text)
+    # Bold italic: ***text*** or ___text___
     text = re.sub(r'\*\*\*([^\*]+)\*\*\*', r'<strong><em>\1</em></strong>', text)
     text = re.sub(r'___([^_]+)___', r'<strong><em>\1</em></strong>', text)
+    # Bold: **text** or __text__
     text = re.sub(r'\*\*([^\*]+)\*\*', r'<strong>\1</strong>', text)
     text = re.sub(r'__([^_]+)__', r'<strong>\1</strong>', text)
+    # Italic: *text* or _text_
     text = re.sub(r'\*([^\*]+)\*', r'<em>\1</em>', text)
     text = re.sub(r'(?<!\w)_([^_]+)_(?!\w)', r'<em>\1</em>', text)
+    # Strikethrough: ~~text~~
     text = re.sub(r'~~([^~]+)~~', r'<del>\1</del>', text)
+    # Links: [text](url)
     text = re.sub(r'\[([^\]]+)\]\(([^\)]+)\)', r'<a href="\2">\1</a>', text)
     
     return text
 
-def parse_markdown(md_content: str) -> str:
+def parse_markdown(md_content: str, base_dir: Path = None) -> str:
     lines = md_content.splitlines()
     html_lines = []
     
@@ -568,12 +670,19 @@ def parse_markdown(md_content: str) -> str:
     for line in lines:
         stripped = line.strip()
         
+        # 1. Code blocks & Diagrams
         if stripped.startswith("```"):
             if in_code_block:
                 in_code_block = False
                 code_text = "\n".join(code_content)
-                code_text = code_text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-                html_lines.append(f"<pre class='code-block'><code class='lang-{code_lang}'>{code_text}</code></pre>")
+                
+                # Check for Mermaid Diagram
+                if is_mermaid_content(code_lang, code_text):
+                    html_lines.append(f"<div class='mermaid-diagram'><pre class='mermaid'>\n{code_text}\n</pre></div>")
+                else:
+                    code_text_escaped = code_text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+                    html_lines.append(f"<pre class='code-block'><code class='lang-{code_lang}'>{code_text_escaped}</code></pre>")
+                
                 code_content = []
             else:
                 if in_ul: html_lines.append("</ul>"); in_ul = False
@@ -590,10 +699,12 @@ def parse_markdown(md_content: str) -> str:
             code_content.append(line)
             continue
             
+        # 2. Page Break Directives
         if stripped in ["\\pagebreak", "<!-- pagebreak -->", "<div class=\"page-break\"></div>"]:
             html_lines.append("<div class='page-break'></div>")
             continue
             
+        # 3. Callout Boxes
         callout_match = re.match(r'^>\s*\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]', stripped, re.IGNORECASE)
         if callout_match:
             if in_ul: html_lines.append("</ul>"); in_ul = False
@@ -607,15 +718,16 @@ def parse_markdown(md_content: str) -> str:
             html_lines.append(f"<div class='callout callout-{callout_type}'><div class='callout-title'>{callout_type}</div>")
             continue
             
+        # 4. Blockquotes
         if stripped.startswith(">"):
             quote_text = stripped[1:].strip()
             if in_callout:
-                html_lines.append(f"<p>{inline_format(quote_text)}</p>")
+                html_lines.append(f"<p>{inline_format(quote_text, base_dir)}</p>")
                 continue
             if not in_blockquote:
                 in_blockquote = True
                 html_lines.append("<blockquote>")
-            html_lines.append(f"<p>{inline_format(quote_text)}</p>")
+            html_lines.append(f"<p>{inline_format(quote_text, base_dir)}</p>")
             continue
         else:
             if in_blockquote:
@@ -625,6 +737,7 @@ def parse_markdown(md_content: str) -> str:
                 html_lines.append("</div>")
                 in_callout = False
 
+        # 5. Tables
         if stripped.startswith("|") and stripped.endswith("|"):
             if in_ul: html_lines.append("</ul>"); in_ul = False
             if in_ol: html_lines.append("</ol>"); in_ol = False
@@ -637,12 +750,12 @@ def parse_markdown(md_content: str) -> str:
                 in_table = True
                 html_lines.append("<div class='table-container'><table><thead><tr>")
                 for p in parts:
-                    html_lines.append(f"<th>{inline_format(p)}</th>")
+                    html_lines.append(f"<th>{inline_format(p, base_dir)}</th>")
                 html_lines.append("</tr></thead><tbody>")
             else:
                 html_lines.append("<tr>")
                 for p in parts:
-                    html_lines.append(f"<td>{inline_format(p)}</td>")
+                    html_lines.append(f"<td>{inline_format(p, base_dir)}</td>")
                 html_lines.append("</tr>")
             continue
         else:
@@ -650,6 +763,7 @@ def parse_markdown(md_content: str) -> str:
                 html_lines.append("</tbody></table></div>")
                 in_table = False
 
+        # 6. Unordered Lists
         if re.match(r"^[\*\-\+]\s+", stripped):
             if in_ol: html_lines.append("</ol>"); in_ol = False
             if not in_ul:
@@ -660,20 +774,21 @@ def parse_markdown(md_content: str) -> str:
                 item_text = f"<input type='checkbox' disabled /> {item_text[4:]}"
             elif item_text.startswith("[x] ") or item_text.startswith("[X] "):
                 item_text = f"<input type='checkbox' checked disabled /> {item_text[4:]}"
-            html_lines.append(f"<li>{inline_format(item_text)}</li>")
+            html_lines.append(f"<li>{inline_format(item_text, base_dir)}</li>")
             continue
         else:
             if in_ul:
                 html_lines.append("</ul>")
                 in_ul = False
 
+        # 7. Ordered Lists
         if re.match(r"^\d+\.\s+", stripped):
             if in_ul: html_lines.append("</ul>"); in_ul = False
             if not in_ol:
                 in_ol = True
                 html_lines.append("<ol>")
             item_text = re.sub(r"^\d+\.\s+", "", stripped)
-            html_lines.append(f"<li>{inline_format(item_text)}</li>")
+            html_lines.append(f"<li>{inline_format(item_text, base_dir)}</li>")
             continue
         else:
             if in_ol:
@@ -683,24 +798,26 @@ def parse_markdown(md_content: str) -> str:
         if not stripped:
             continue
 
+        # 8. Horizontal rules
         if re.match(r"^(\-{3,}|\*{3,}|_{3,})$", stripped):
             html_lines.append("<hr/>")
             continue
 
+        # 9. Headings
         if stripped.startswith("# "):
-            html_lines.append(f"<h1>{inline_format(stripped[2:])}</h1>")
+            html_lines.append(f"<h1>{inline_format(stripped[2:], base_dir)}</h1>")
         elif stripped.startswith("## "):
-            html_lines.append(f"<h2>{inline_format(stripped[3:])}</h2>")
+            html_lines.append(f"<h2>{inline_format(stripped[3:], base_dir)}</h2>")
         elif stripped.startswith("### "):
-            html_lines.append(f"<h3>{inline_format(stripped[4:])}</h3>")
+            html_lines.append(f"<h3>{inline_format(stripped[4:], base_dir)}</h3>")
         elif stripped.startswith("#### "):
-            html_lines.append(f"<h4>{inline_format(stripped[5:])}</h4>")
+            html_lines.append(f"<h4>{inline_format(stripped[5:], base_dir)}</h4>")
         elif stripped.startswith("##### "):
-            html_lines.append(f"<h5>{inline_format(stripped[6:])}</h5>")
+            html_lines.append(f"<h5>{inline_format(stripped[6:], base_dir)}</h5>")
         elif stripped.startswith("###### "):
-            html_lines.append(f"<h6>{inline_format(stripped[7:])}</h6>")
+            html_lines.append(f"<h6>{inline_format(stripped[7:], base_dir)}</h6>")
         else:
-            html_lines.append(f"<p>{inline_format(stripped)}</p>")
+            html_lines.append(f"<p>{inline_format(stripped, base_dir)}</p>")
 
     if in_ul: html_lines.append("</ul>")
     if in_ol: html_lines.append("</ol>")
@@ -794,15 +911,36 @@ def convert(
     }}
     """
 
-    html_body = parse_markdown(md_text)
+    html_body = parse_markdown(md_text, base_dir=input_path.parent)
     document_title = input_path.stem.replace("_", " ").replace("-", " ").title()
+    mermaid_theme = "dark" if theme.lower() == "dark" else "default"
+    base_href = f"{input_path.parent.as_uri()}/"
 
     full_html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<base href="{base_href}">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{document_title}</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+  window.addEventListener("DOMContentLoaded", async () => {{
+    if (typeof mermaid !== 'undefined') {{
+      try {{
+        mermaid.initialize({{
+          startOnLoad: false,
+          theme: '{mermaid_theme}',
+          securityLevel: 'loose',
+          fontFamily: 'Plus Jakarta Sans, sans-serif'
+        }});
+        await mermaid.run();
+      }} catch (err) {{
+        console.error("Mermaid render error:", err);
+      }}
+    }}
+  }});
+</script>
 <style>
 {page_css}
 {css_rules}
@@ -825,6 +963,7 @@ def convert(
         "--headless",
         "--disable-gpu",
         "--run-all-compositor-stages-before-draw",
+        "--virtual-time-budget=3000",
         f"--print-to-pdf={output_path}",
         html_url
     ]
