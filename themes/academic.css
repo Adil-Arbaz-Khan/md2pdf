@@ -1,0 +1,21 @@
+@page { margin: 20mm 20mm 20mm 20mm; }
+* { box-sizing: border-box; }
+body {
+  font-family: 'Times New Roman', Times, Georgia, serif;
+  color: #111111;
+  background-color: #ffffff;
+  line-height: 1.6;
+  font-size: 12pt;
+  margin: 0;
+}
+h1 { font-size: 18pt; font-weight: bold; text-align: center; margin-bottom: 18pt; border-bottom: 1px solid #111; padding-bottom: 6pt; }
+h2 { font-size: 14pt; font-weight: bold; margin-top: 16pt; margin-bottom: 6pt; border-bottom: 0.5pt solid #888; page-break-after: avoid; }
+h3 { font-size: 12pt; font-weight: bold; margin-top: 12pt; margin-bottom: 4pt; page-break-after: avoid; }
+p, li { text-align: justify; margin: 4pt 0 6pt 0; }
+code { font-family: 'Courier New', monospace; font-size: 10pt; background: #f4f4f4; padding: 1pt 3pt; border: 0.5pt solid #ddd; }
+pre.code-block { background: #f8f8f8; border: 1pt solid #ccc; padding: 8pt; font-size: 9.5pt; margin: 8pt 0; page-break-inside: avoid; }
+pre.code-block code { background: transparent; border: none; padding: 0; }
+table { width: 100%; border-collapse: collapse; margin: 12pt 0; font-size: 10pt; page-break-inside: avoid; }
+th { border-top: 1.5pt solid #111; border-bottom: 1pt solid #111; padding: 4pt 6pt; text-align: left; }
+td { border-bottom: 0.5pt solid #ddd; padding: 4pt 6pt; }
+blockquote { border-left: 2pt solid #666; margin: 8pt 0 8pt 16pt; padding-left: 8pt; font-style: italic; }

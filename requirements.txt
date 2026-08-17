@@ -1,0 +1,6 @@
+# md2pdf requires zero external Python dependencies.
+# It is built 100% using Python's standard library.
+#
+# System requirements:
+# - Python >= 3.8
+# - Any Chromium-based browser (Microsoft Edge, Google Chrome, Brave, Chromium)

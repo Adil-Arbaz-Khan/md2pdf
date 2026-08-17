@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "md2pdf-cli"
+version = "1.0.0"
+description = "Zero-dependency Markdown to PDF converter powered by headless Chromium/Edge"
+readme = "README.md"
+authors = [{ name = "Adil Arbaz Khan", email = "adilarbazkhan199@gmail.com" }]
+license = { text = "MIT" }
+readme = "README.md"
+urls = { Homepage = "https://github.com/Adil-Arbaz-Khan/md2pdf", Repository = "https://github.com/Adil-Arbaz-Khan/md2pdf" }
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Text Processing :: Markup :: Markdown",
+]
+requires-python = ">=3.8"
+dependencies = []
+
+[project.scripts]
+md2pdf = "md2pdf:main"
