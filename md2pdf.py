@@ -660,6 +660,29 @@ def inline_format(text: str, base_dir: Path = None) -> str:
     
     return text
 
+def sanitize_mermaid_code(code_text: str) -> str:
+    """Sanitizes Mermaid code to prevent known parser syntax breaks."""
+    lines = code_text.splitlines()
+    if not lines:
+        return code_text
+    
+    first_non_empty = ""
+    for l in lines:
+        if l.strip():
+            first_non_empty = l.strip().lower()
+            break
+            
+    # For timeline diagrams, sanitize semicolons which prematurely terminate Mermaid statements
+    if first_non_empty.startswith("timeline"):
+        clean_lines = []
+        for l in lines:
+            if ":" in l:
+                l = l.replace(";", ",")
+            clean_lines.append(l)
+        return "\n".join(clean_lines)
+        
+    return code_text
+
 def parse_markdown(md_content: str, base_dir: Path = None) -> str:
     lines = md_content.splitlines()
     html_lines = []
@@ -686,7 +709,8 @@ def parse_markdown(md_content: str, base_dir: Path = None) -> str:
                 
                 # Check for Mermaid Diagram
                 if is_mermaid_content(code_lang, code_text):
-                    html_lines.append(f"<div class='mermaid-diagram'><pre class='mermaid'>\n{code_text}\n</pre></div>")
+                    clean_diagram = sanitize_mermaid_code(code_text)
+                    html_lines.append(f"<div class='mermaid-diagram'><pre class='mermaid'>\n{clean_diagram}\n</pre></div>")
                 else:
                     code_text_escaped = code_text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
                     html_lines.append(f"<pre class='code-block'><code class='lang-{code_lang}'>{code_text_escaped}</code></pre>")
