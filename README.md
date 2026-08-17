@@ -147,7 +147,7 @@ Content starting at the top of page two...
 ```
 ┌──────────────┐     md2pdf Parser Engine          ┌────────────────┐     Headless Chromium Engine     ┌──────────────┐
 │ Markdown Doc │ ────────────────────────────────> │ Clean HTML5    │ ───────────────────────────────> │ Rendered PDF │
-│   (.md)      │   (Generates DOM + Theme CSS)     │ + @page Styles │     (msedge / chrome headless) │   (.pdf)     │
+│   (.md)      │   (Generates DOM + Theme CSS)     │ + @page Styles │     (msedge / chrome headless)   │   (.pdf)     │
 └──────────────┘                                   └────────────────┘                                  └──────────────┘
 ```
 
