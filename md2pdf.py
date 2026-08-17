@@ -186,20 +186,24 @@ pre.code-block code {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 16px 0;
-  padding: 14px;
+  width: 100%;
+  margin: 20px 0 24px 0;
+  padding: 20px 16px;
   background-color: #f8fafc !important;
   border: 1px solid #e2e8f0;
-  border-radius: 6px;
+  border-radius: 8px;
   page-break-inside: avoid;
-  overflow: hidden;
+  overflow: visible;
   -webkit-print-color-adjust: exact !important;
   print-color-adjust: exact !important;
 }
 
 .mermaid-diagram svg {
-  max-width: 100% !important;
+  width: 100% !important;
+  max-width: 95% !important;
   height: auto !important;
+  display: block;
+  margin: 0 auto;
 }
 
 .table-container {
@@ -407,20 +411,24 @@ pre.code-block code {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 16px 0;
-  padding: 14px;
+  width: 100%;
+  margin: 20px 0 24px 0;
+  padding: 20px 16px;
   background-color: #020617 !important;
   border: 1px solid #1e293b;
-  border-radius: 6px;
+  border-radius: 8px;
   page-break-inside: avoid;
-  overflow: hidden;
+  overflow: visible;
   -webkit-print-color-adjust: exact !important;
   print-color-adjust: exact !important;
 }
 
 .mermaid-diagram svg {
-  max-width: 100% !important;
+  width: 100% !important;
+  max-width: 95% !important;
   height: auto !important;
+  display: block;
+  margin: 0 auto;
 }
 
 .table-container { margin: 12px 0 16px 0; page-break-inside: avoid; overflow-x: auto; }
@@ -932,9 +940,35 @@ def convert(
           startOnLoad: false,
           theme: '{mermaid_theme}',
           securityLevel: 'loose',
-          fontFamily: 'Plus Jakarta Sans, sans-serif'
+          fontFamily: 'Plus Jakarta Sans, sans-serif',
+          fontSize: 16,
+          flowchart: {{
+            useMaxWidth: false,
+            htmlLabels: true,
+            curve: 'basis',
+            diagramPadding: 16
+          }},
+          sequence: {{
+            useMaxWidth: false,
+            diagramMarginX: 20,
+            diagramMarginY: 15
+          }},
+          timeline: {{
+            useMaxWidth: false,
+            diagramPadding: 18
+          }},
+          gantt: {{
+            useMaxWidth: false
+          }}
         }});
         await mermaid.run();
+        
+        // Dynamically scale SVGs to expand generously across container
+        document.querySelectorAll('.mermaid-diagram svg').forEach(svg => {{
+          svg.style.maxWidth = '100%';
+          svg.style.width = '100%';
+          svg.removeAttribute('height');
+        }});
       }} catch (err) {{
         console.error("Mermaid render error:", err);
       }}
